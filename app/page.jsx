@@ -1,7 +1,22 @@
+"use client"
 import { Copy, Link, LogIn, QrCode } from "lucide-react";
-import Image from "next/image";
+import {useState,useEffect} from "react"
+
 
 export default function Home() {
+  const [shortenLinks,setShortenLinks] = useState([])
+  const CreateNewLink = async ()=>{
+    try {
+      const req = await fetch(`${NEXT_PUBLIC_API}/shortenLink`)
+      const res = await req.json()
+
+      if (res){
+
+      }
+    } catch (error) {
+      
+    }
+  }
   return (
     <div className="main-section-home flex flex-col h-[100vh] w-[100vw]">
       <div className="header w-[100%] h-[15vh] flex items-center">
