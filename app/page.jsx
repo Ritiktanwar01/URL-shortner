@@ -1,7 +1,47 @@
+"use client"
 import { Copy, Link, LogIn, QrCode } from "lucide-react";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 
 export default function Home() {
+  const [links, setLinks] = useState([])
+  const [url, setUrl] = useState("")
+  const fetchall = async () => {
+    const res = await fetch("http://localhost:8000/shortner/getall")
+    const data = await res.json()
+    setLinks(data.allLinks)
+  }
+  useEffect(() => {
+    fetchall()
+  }, [])
+  const createNewLink = async () => {
+  try {
+    const bodyItem = JSON.stringify({ URL: url });
+
+    const req = await fetch("http://localhost:8000/shortner/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: bodyItem
+    });
+
+    const res = await req.json();
+    fetchall();
+    console.log(res);
+  } catch (error) {
+    console.error("Error creating new link:", error);
+  }
+};
+
+  const copyToClipboard = async (text) => {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (err) {
+    console.error('Failed to copy text:', err);
+  }
+};
+
   return (
     <div className="main-section-home flex flex-col h-[100vh] w-[100vw]">
       <div className="header w-[100%] h-[15vh] flex items-center">
@@ -17,68 +57,76 @@ export default function Home() {
           </button> */}
         </div>
       </div>
-       <div className="main-section w-[100%] h-[90vh] flex flex-col items-center">
-          <div className="section-main-middle w-[60%] h-[30%] items-center flex flex-col justify-center">
-              <h1 className="h-main ">Shorten Your Loooong Links :)</h1>
-              <p className="text-[1vw] text-center mt-[2%] text-[#C9CED6] w-[60%]">Linkly is an efficient and easy-to-use URL shortening service that streamlines your online experience.</p>
-          </div>
-          <div className="section-main-middle w-[60%] h-[10%] flex justify-center">
-              <div className="input-box flex items-center justify-center h-[8vh] text-white bg-[#353C4A] w-[60%] rounded-3xl">
-                <Link color="#C9CED6" size={"1.5vw"}/>
-                <input type="text" className="w-[60%] h-[100%] border-0 outline-0 px-[4%] text-[#C9CED6]"/>
-                <button className="w-[30%] bg-blue-600 h-[80%] rounded-4xl cursor-pointer font-[1vw]">Shorten Now!</button>
-              </div>
-          </div>
-          <div className="section-link-tabl w-[100%] h-[50vh] flex justify-center mt-[6vh]">
-              <div className="table w-[90%] h-[100%] overflow-y-scroll hide-scrollbar">
-                  <div className="table-head w-full h-[10vh] bg-[#353C4A] rounded-cutom flex items-center justify-around px-[2%]">
-                      <div className="col-30 w-[29.5%]">
-                        <p>Short Link</p>
-                      </div>
-                      <div className="col-30 w-[29.5%]">
-                        <p>Original Link</p>
-                      </div>
-                      <div className="col-10 w-[9.5%]">
-                        <p>QR Code</p>
-                      </div>
-                      <div className="col-10 w-[9.5%]">
-                        <p>Clicks</p>
-                      </div>
-                      <div className="col-10 w-[9.5%]">
-                        <p>Status</p>
-                      </div>
-                      <div className="col-10 w-[9.5%]">
-                        <p>Date</p>
-                      </div>
-                  </div>
-                  <div className="table-head w-full h-[10vh] custom-bg flex items-center justify-around px-[2%] mt-2">
-                      <div className="col-30 w-[29.5vw] flex items-center gap-[2vw] text-white">
-                        <p>http://localhost:3000/gdgsdjjgj</p>
-                        <Copy className="cursor-pointer"/>
-                      </div>
-                      <div className="col-30 w-[29.5vw] flex items-center gap-[.5vw] text-white">
-                        <img src={"https://www.youtube.com/favicon.ico"} width={20} height={20} />
-                        <p className=" w-[20vw] overflow-hidden overflow-ellipsis whitespace-nowrap">
-                          https://www.bing.com/search?pglt=931&q=how+to+hide+overflow+text+in+css&cvid=18c11b70a9f74e3cb5b6f6e349cd4216&gs_lcrp=EgRlZGdlKgYIABBFGDkyBggAEEUYOTIGCAEQABhAMgYIAhAAGEAyBggDEAAYQDIGCAQQABhAMgYIBRAAGEDSAQg4ODk2ajBqMagCALACAA&FORM=ANNTA1&PC=U531
-                        </p>
-                      </div>
-                      <div className="col-10 w-[9.5vw] text-white">
-                        <QrCode />
-                      </div>
-                      <div className="col-10 w-[9.5vw] text-white">
-                        <p>20</p>
-                      </div>
-                      <div className="col-10 w-[9.5vw] text-white flex items-center gap-[1vw]">
-                        <p>Active</p>
-                        <Link size={14}/>
-                      </div>
-                      <div className="col-10 w-[9.5vw] text-white">
-                        <p>Oct-10-2023</p>
-                      </div>
-                  </div>
-              </div>
+      <div className="main-section w-[100%] h-[90vh] flex flex-col items-center">
+        <div className="section-main-middle w-[60%] h-[30%] items-center flex flex-col justify-center">
+          <h1 className="h-main ">Shorten Your Loooong Links :)</h1>
+          <p className="text-[1vw] text-center mt-[2%] text-[#C9CED6] w-[60%]">Linkly is an efficient and easy-to-use URL shortening service that streamlines your online experience.</p>
+        </div>
+        <div className="section-main-middle w-[60%] h-[10%] flex justify-center">
+          <div className="input-box flex items-center justify-center h-[8vh] text-white bg-[#353C4A] w-[60%] rounded-3xl">
+            <Link color="#C9CED6" size={"1.5vw"} />
+            <input type="text" value={url} onChange={(e)=>setUrl(e.target.value)} className="w-[60%] h-[100%] border-0 outline-0 px-[4%] text-[#C9CED6]" />
+            <button className="w-[30%] bg-blue-600 h-[80%] rounded-4xl cursor-pointer font-[1vw]" onClick={createNewLink}>Shorten Now!</button>
           </div>
         </div>
+        <div className="section-link-tabl w-[100%] h-[50vh] flex justify-center mt-[6vh]">
+          <div className="table w-[90%] h-[100%] overflow-y-scroll hide-scrollbar">
+            <div className="table-head w-full h-[10vh] bg-[#353C4A] rounded-cutom flex items-center justify-around px-[2%]">
+              <div className="col-30 w-[33.5%]">
+                <p>Short Link</p>
+              </div>
+              <div className="col-30 w-[34.5%]">
+                <p>Original Link</p>
+              </div>
+              {/* <div className="col-10 w-[9.5%]">
+                        <p>QR Code</p>
+                      </div> */}
+              <div className="col-10 w-[9.5%]">
+                <p>Clicks</p>
+              </div>
+              <div className="col-10 w-[9.5%]">
+                <p>Status</p>
+              </div>
+              <div className="col-10 w-[9.5%]">
+                <p>Date</p>
+              </div>
+            </div>
+            {
+              links.map((links) => {
+                return (
+                  <div key={links._id} className="table-head w-full h-[10vh] custom-bg flex items-center justify-around px-[2%] mt-2">
+                    <div className="col-30 w-[33.5vw] flex items-center gap-[2vw] text-white">
+                      <p>{`http://localhost:8000/url/${links.shortenLink}`}</p>
+                      <Copy className="cursor-pointer" onClick={()=>{
+                        copyToClipboard(`http://localhost:8000/url/${links.shortenLink}`)
+                      }} />
+                    </div>
+                    <div className="col-30 w-[34.5vw] flex items-center gap-[.5vw] text-white">
+                      <img src={"https://www.youtube.com/favicon.ico"} width={20} height={20} />
+                      <p className=" w-[20vw] overflow-hidden overflow-ellipsis whitespace-nowrap">
+                        {links.mainSite}
+                      </p>
+                    </div>
+                    {/* <div className="col-10 w-[9.5vw] text-white">
+                        <QrCode />
+                      </div> */}
+                    <div className="col-10 w-[9.5vw] text-white">
+                      <p>{links.visites}</p>
+                    </div>
+                    {/* <div className="col-10 w-[9.5vw] text-white flex items-center gap-[1vw]">
+                      <p>Active</p>
+                      <Link size={14} />
+                    </div>
+                    <div className="col-10 w-[9.5vw] text-white">
+                      <p>Oct-10-2023</p>
+                    </div> */}
+                  </div>
+                )
+              })
+            }
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

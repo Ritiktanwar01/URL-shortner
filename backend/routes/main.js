@@ -32,7 +32,7 @@ router.post("/create", async (req, res) => {
             res.status(400).json({messege:"url already exists"})
         }else{
 
-            const createOneURL = new URLs.create({
+            const createOneURL = await URLs.create({
                 mainSite: URL,
                 shortenLink:generatePassword(),
                 visites : 0
@@ -71,6 +71,16 @@ router.get("/url/:id",async (req,res)=>{
 
     } catch (error) {
         
+    }
+})
+
+router.get("/getall", async(req,res)=>{
+    try {
+        const allLinks = await URLs.find()
+        res.status(200).json({allLinks})
+    } catch (error) {
+        res.status(500).send({error})
+        console.log("somthing went wrong on",error)
     }
 })
 

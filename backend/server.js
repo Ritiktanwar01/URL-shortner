@@ -2,6 +2,7 @@ const express = require("express")
 const app = express()
 const routemain = require("./routes/main")
 const mongoose = require("mongoose")
+const cors = require("cors")
 
 
 app.use(express.json())
@@ -17,7 +18,9 @@ mongoose.connect('mongodb://localhost:27017/urlshortner').then(()=>{
 })
 
 
-
+app.use(cors({
+    origin:"http://localhost:3000"
+}))
 app.use("/shortner",routemain)
 
 
